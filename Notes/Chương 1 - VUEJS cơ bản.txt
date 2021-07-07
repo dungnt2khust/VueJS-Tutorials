@@ -1,0 +1,17 @@
+1. VueJS là 1 framework của Javascript. Mã nguồn 100% là javacript
+2. React -> Facebook
+	JSX -> Thay thế HTML
+   Angular -> Google
+	Typescript
+	Angular1
+	Angular2 > -> AngularJS (Khác hẳn Angular1)
+   VueJS -> Một nhân viên của Google. Laravel
+	Ra sau react và angular kế thừa được một số đặc điểm nổi bật
+
+   Vue like View in MVC -> một framework linh động, 
+   hỗ trợ single-page-application (ứng dụng đơn trang - không phải tải lại trang nhiều )
+
+3. Cài đặt môi trường
+   - VScode
+   - NodeJS
+   - Git
