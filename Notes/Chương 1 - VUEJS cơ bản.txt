@@ -70,3 +70,29 @@
 16. Props
    - Những data truyền từ Component cha và Component con
    - Cú pháp giống thuộc tính
+
+17. Props Down -> Truyền dữ liệU xuống con và không được thay đổi trực tiếp
+18. Event Up -> Truyền một sự kiện cho component cha biết làm muốn thay đổi 
+-> Nhiệm vụ của component cha là tiếp nhận và tiến hành thay đổi
+-> Custom event 
+-> Khi dùng sự kiện mới thì biến event sẽ không có mà truyền vào tham số thứ 2 trong hàm $emit bằng cách tự khai báo
+
+18. Ref (reference)
+   - ví dụ một input muốn custom cho dễ và có thể tạo một component mớI hướng đến sự kiện input đó
+   - cài đặt component gốc ref="input"
+   - từ compnent mới this.$refs.input.click()
+   - ngoài ra có thể dùng label như javascript thông thưỜng
+
+19. Slot
+   - slot sẽ tạo ra thêm html cho thẻ con bằng cách kẹp giữa thẻ con <subcomponent> // addition html</subcomponent>
+   - sau đó thì thêm vào component con một thẻ slot để nhận html đó
+
+20. Lifecycle
+   1. Before create: 
+   2. Created: Toàn bộ dữ liệu được load, gọi API, call AJAX 
+   3. Before mount: compile dom
+   4. Mounted: All dom display, jquery
+   5. Before destroy: Chạy khi bị huỷ bỏ (khi dùng biểu thức điều kiện) destroy thư viện của component
+   6. Destroyed:
+   7. Before update: 
+   8. Updated:
