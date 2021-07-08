@@ -1,9 +1,9 @@
-Chương 1: VueJS cơ bản
-Chương 2: Xây dựng Game đổ xúc xắc
-Chương 3: 
-Chương 4: 
-Chương 5:
-Chương 6:
-Chương 7: 
-Chương 8: 
-Chương 9:
+Chương 1- VueJS cơ bản
+Chương 2 - Xây dựng Game đ xúc sắc
+Chương 3 - Xây dựng Project TodoList
+Chương 4 - Sử dụng VueX với Project Todolist
+Chương 5 - Sử dụng VueX với Project Shopping Online
+Chương 6 - Sử dụng Vue-Router với Project Blog tin tức
+Chương 7 - Sử dụng API kết nối với Server Back End
+Chương 8 - Xây dựng Project Task Manage với Firebase
+Chương 9 - Tổng kết khoá học

@@ -15,3 +15,58 @@
    - VScode
    - NodeJS
    - Git
+
+4. 
+   Cài đặt VueJS
+   Thêm đoạn script <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script> 
+
+   Vue instance là gì ? Dễ hiểu là một đối tượng Vue để quản lý đối tượng trong DOM
+   đối tượng vue đƯợc khởi tạo sẽ gán những method và property đố để sử dụng
+
+5. Data binding
+   v-bind:(attribute) => v-bind:href="url"
+6. Javascript expression
+   {{ expression return a value}}
+7. events
+   v-on:(event) => v-on:click="method(event)"
+   or v-on:click="method($event, number)"
+8. Event modifier 
+   thay vì v-onsubmit và e.preventDefault() thì dùng v-on:submit.prevent.
+
+9. Computed & methods
+   - Computed thì không truyền vào tham số, computed chỉ load lại phần đã bị thay đổi chứ không load lại hết (hiệu suất tăng tốt hơn)
+   - Methods thì có thể truyền vào tham số để tính toán, method sẽ được chạy một cách không mong muốn vì vue sẽ reload lại đối tưỢng vue
+10. v-model
+   Ràng buộc dữ liệu 2 chiều
+11. Ràng buộc class 
+   v-bind:class
+
+12. Vue CLI - command line interface
+   Mỗi thành phần là một đối tượng vue và cần đƯợc chia ra và xử lý 
+   vuejs template webpack
+
+13. development
+   - Babel: is a Javascript compiler - giúp cho mã nguồn mới, cú pháp mới chạy được trên các trình duyệt cũ
+      -> ES6 phiên bản mới
+   - webpack là một công cụ giúp đóng gói code, đóng gói mã nguồn
+      -> Đóng gói vào trong một file js duy nhất ở file dist (dùng lệnh npm run build để hiểu rõ hơn)
+
+14. Cấu trúc file của vue js
+   - toàn bộ mã nguồn sẽ trong thư mục src
+   - import vue trong dependencies
+   - app.vue sẽ chứa toàn bộ mã nguồn - một thành phần trong trang web sẽ được quản lý bởi một file .vue
+   - file app.vue gồm 3 thành phần (template, script, style) - script export ra và file main.js sẽ import
+   - nếu muốn cấu hình lại file webpack thì vào webpack.config.js
+   webpack: entry : file js đầu tiên chạy
+            output: nơi xuất file, cấu hình tên file cấu hình
+            file-loader: chỉnh sửa lưu file (lưu các tệp tài liệu)
+            vue-loader: để webpack hiểu là một file hợp lệ và đóng gói vào file js cuối cùng
+   - cài vetur để format file .vue nhìn cho đẹp và có thể dùng từ khoá scaffold để tạo mới một cấu trúc
+   - nếu không có thể dùng vue vscode snippet và dùng vbase để tạo mới
+   - data phải là một function và return về 1 object
+
+15. Khai báo component khi sử dụng A
+
+16. Props
+   - Những data truyền từ Component cha và Component con
+   - Cú pháp giống thuộc tính
