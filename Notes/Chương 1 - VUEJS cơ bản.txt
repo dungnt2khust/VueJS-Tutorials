@@ -37,7 +37,9 @@
    - Computed thì không truyền vào tham số, computed chỉ load lại phần đã bị thay đổi chứ không load lại hết (hiệu suất tăng tốt hơn)
    - Methods thì có thể truyền vào tham số để tính toán, method sẽ được chạy một cách không mong muốn vì vue sẽ reload lại đối tưỢng vue
 10. v-model
-   Ràng buộc dữ liệu 2 chiều
+   Ràng buộc dữ liệu 2 chiều: 
+   bình thường khi ràng buộc v-bind sẽ chỉ được 1 chiều 
+   còn khi dùng v-model để ràng buộc dữ liệu 2 chiều thì sẽ cập nhật dữ liệu được cả 2 chiều
 11. Ràng buộc class 
    v-bind:class
 
@@ -96,3 +98,4 @@
    6. Destroyed:
    7. Before update: 
    8. Updated:
+21. VueJS chỉ thay đổi khi có sự thay đổi địa chỉ cho nên khi thay đổi phần tử trong object hoặc array trực tiếp sẽ có hiện tượng không reactive

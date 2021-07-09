@@ -1,65 +1,131 @@
 <template>
 	<div id="app">
 		<h1>Dice Game</h1>
-		<div class="wrapper clearfix">
-            <div class="player-panel winner">
-                <div class="player-name">Winner</div>
-                <div class="player-score">43</div>
-                <div class="player-current-box">
-                    <div class="player-current-label">Current</div>
-                    <div class="player-current-score">11</div>
-                </div>
-            </div>
+		<div>{{ isWinner }}</div>
+		<div class="wrapper clearfix"> 
+            <players 
+				v-bind:scoresPlayer="scoresPlayer"
+				v-bind:activePlayer="activePlayer"
+				v-bind:currentScore="currentScore"
+				v-bind:isWinner="isWinner"
+				/>
+
+			<controls 
+				v-bind:finalScore="finalScore"
+				v-on:handleNewGame="handleNewGame"
+				v-on:handleRollDices="handleRollDices"
+				v-on:handleHoldScore="handleHoldScore"
+				v-on:handleChangeFinalScore="handleChangeFinalScore"
+				v-bind:isPlaying="isPlaying"
+				/>
             
-            <div class="player-panel">
-                <div class="player-name">Player 2</div>
-                <div class="player-score">72</div>
-                <div class="player-current-box">
-                    <div class="player-current-label">Current</div>
-                    <div class="player-current-score">0</div>
-                </div>
-            </div>
-            
-            <button class="control btn-new"><i class="ion-ios-plus-outline"></i>New game</button>
-            <button class="control btn-roll"><i class="ion-ios-loop"></i>Roll dice</button>
-            <button class="control btn-hold"><i class="ion-ios-download-outline"></i>Hold</button>
-            
-            <input type="number" placeholder="Final score" class="final-score">
-            
-            <div id="dice-1" class="dice">
-                <div class="spinner dice-3">
-                    <div class="face1">1</div>
-                    <div class="face2">2</div>
-                    <div class="face3">3</div>
-                    <div class="face4">4</div>
-                    <div class="face5">5</div>
-                    <div class="face6">6</div>
-                </div>
-            </div>
-            <div id="dice-2" class="dice">
-                <div class="spinner dice-6">
-                    <div class="face1">1</div>
-                    <div class="face2">2</div>
-                    <div class="face3">3</div>
-                    <div class="face4">4</div>
-                    <div class="face5">5</div>
-                    <div class="face6">6</div>
-                </div>
-            </div>
+			<dices v-bind:dices="dices"/>
+
+			<popup-rule 
+				v-on:handleConfirm="handleConfirm"
+				v-bind:isOpenPopup="isOpenPopup"
+				/>
         </div>
 	</div>
 </template>
 
 <script>
+import Players from './components/Players.vue'
+import Controls from './components/Controls.vue'
+import Dices from './components/Dices.vue'
+import PopupRule from './components/PopupRule.vue'
 export default {
 	name: 'app',
 	data () {
 		return {
-			msg: 'Hello VueJs'
+			isOpenPopup: false,
+			isPlaying: false,
+			activePlayer: 1, // ai là người chơi hiện tại
+			scoresPlayer: [0, 0],
+			currentScore: 0,
+			dices: [5, 2],
+			finalScore: 10
 		}
 	},
 	components: {
+		Players,
+		Controls,
+		Dices,
+		PopupRule
+	},
+	computed: {
+		isWinner() {
+			let {scoresPlayer, finalScore} = this;
+			if (scoresPlayer[0] >= finalScore || scoresPlayer[1] >= finalScore)  {
+				this.isPlaying = false;
+				return true;
+			} else {
+				return false;
 			}
+		}
+	},
+	methods: { 
+		handleNewGame() {
+			// Hiển thị popup -> show luật chơi
+			this.isOpenPopup = true;
+		},
+		handleConfirm() {
+			this.isOpenPopup = false;
+			this.isPlaying = true;
+			this.activePlayer = 0;
+			this.currentScore = 0;
+			this.scoresPlayer = [0, 0];
+			this.dices = [1, 1];
+		},
+		handleRollDices() {
+			if (this.isPlaying){
+				let numberDice1 = Math.floor(Math.random() * 6) + 1;
+				let numberDice2 = Math.floor(Math.random() * 6) + 1;
+				this.dices = [numberDice1, numberDice2];
+
+				if (numberDice1 == 1 || numberDice2 == 1) {
+					//switch turn
+					let activePlayer = this.activePlayer;	
+					setTimeout(function () {
+						alert(`Người chơi player ${activePlayer + 1} đã quay trúng số 1. Rất tiếc !!`);
+					}, 10);
+					
+					this.nextPlayer();		
+				} else {
+					this.currentScore = this.currentScore + numberDice1 + numberDice2;
+				}
+			} else {
+				alert('Vui lòng nhấn vào nút NewGame');
+			}
+		},
+		nextPlayer() {
+			this.activePlayer = this.activePlayer == 0 ? 1 : 0;
+			this.currentScore = 0;
+		},
+		handleHoldScore() {
+			let {scoresPlayer, activePlayer, currentScore} = this;
+			let cloneScorePLayer = [...scoresPlayer];
+			let scoreOld = scoresPlayer[activePlayer];
+			if (this.isPlaying) {
+				cloneScorePLayer[activePlayer] = scoreOld + currentScore;
+				this.scoresPlayer = [...cloneScorePLayer];
+				if (!this.isWinner) {
+					this.nextPlayer();
+				}
+			}
+			else {
+				alert('Vui lòng nhấn vào nút NewGame');
+			}
+		},
+		handleChangeFinalScore(event) {
+			var number = parseInt(event.target.value);
+			if (isNaN(number)) {
+				this.finalScore = '';
+			} else {
+				this.finalScore = number;
+			}
+		}
+	}
 }
 </script>
 
@@ -97,258 +163,5 @@ export default {
 		background-color: #fff;
 		box-shadow: 0px 10px 50px rgba(0, 0, 0, 0.3);
 		overflow: hidden;
-	}
-	/**********************************************
-	*** PLAYERS
-	**********************************************/
-	.player-panel {
-		width: 50%;
-		float: left;
-		height: 600px;
-		padding: 100px;
-		transition: all .3s ease;
-		background-color: #fff;
-	}
-	.player-name {
-		font-size: 40px;
-		text-align: center;
-		text-transform: uppercase;
-		letter-spacing: 2px;
-		font-weight: 100;
-		margin-top: 20px;
-		margin-bottom: 10px;
-		position: relative;
-	}
-
-	.player-score {
-		text-align: center;
-		font-size: 80px;
-		font-weight: 100;
-		color: #42b983;
-		margin-bottom: 130px;
-	}
-
-	.active { background-color: #f7f7f7; }
-	.active .player-name { font-weight: 300; }
-
-	.active .player-name::after {
-		content: "\2022";
-		font-size: 47px;
-		position: absolute;
-		color: #42b983;
-		top: -7px;
-		right: 10px;
-		
-	}
-
-	.player-current-box {
-		background-color: #42b983;
-		color: #fff;
-		width: 40%;
-		margin: 0 auto;
-		padding: 12px;
-		text-align: center;
-	}
-
-	.player-current-label {
-		text-transform: uppercase;
-		margin-bottom: 10px;
-		font-size: 12px;
-		color: #222;
-	}
-
-	.player-current-score {
-		font-size: 30px;
-	}
-
-	.winner { background-color: #f7f7f7; }
-	.winner .player-name { font-weight: 300; color: #42b983; }
-	/**********************************************
-	*** Control
-	**********************************************/
-	.control {
-		position: absolute;
-		width: 200px;
-		left: 50%;
-		transform: translateX(-50%);
-		color: #555;
-		background: none;
-		border: none;
-		font-family: Lato;
-		font-size: 20px;
-		text-transform: uppercase;
-		cursor: pointer;
-		font-weight: 300;
-		transition: background-color 0.3s, color 0.3s;
-	}
-	.control.disable {
-		pointer-events: none;
-	}
-
-	.control:hover { font-weight: 600; }
-	.control:hover i { margin-right: 20px; }
-
-	.control:focus {
-		outline: none;
-	}
-
-	.control i {
-		color: #42b983;
-		display: inline-block;
-		margin-right: 15px;
-		font-size: 32px;
-		line-height: 1;
-		vertical-align: text-top;
-		margin-top: -4px;
-		transition: margin 0.3s;
-	}
-
-	.btn-new { top: 45px;}
-	.btn-roll { top: 403px;}
-	.btn-hold { top: 467px;}
-
-	.final-score {
-		position: absolute;
-		left: 50%;
-		transform: translateX(-50%);
-		top: 520px;
-		color: #555;
-		font-size: 18px;
-		font-family: 'Lato';
-		text-align: center;
-		padding: 10px;
-		width: 160px;
-		text-transform: uppercase;
-	}
-
-	.final-score:focus { outline: none; }
-	 
-	 /* Dice */
-
-	#dice-1 { top: 120px; }
-	#dice-2 { top: 250px; }
-
-	.dice {
-		position: absolute;
-		left: 50%;
-		transform: translateX(-50%);
-		width: 120px;
-		height: 120px;
-		box-shadow: 0px 10px 60px rgba(0, 0, 0, 0.10);
-	}
-	.spinner div {
-		position: absolute;
-		width: 120px;
-		height: 120px;
-		border: 1px solid #ccc;
-		box-shadow: 0 0 20px rgba(0,0,0,0.2);
-		text-align: center;
-		line-height: 120px;
-		font-size: 100px;
-		color: #42b983;
-		font-size: 0;
-		transition: all .3s ease;
-		opacity: 1;
-	}
-
-	.spinner .face1 { 
-		-webkit-transform: translateZ(60px);
-		-ms-transform: translateZ(60px);
-		transform: translateZ(60px);
-		background-image: url("./assets/dice-1.png");
-		background-position: center;
-		background-size: cover;
-	}
-	.spinner .face2 { 
-		-webkit-transform: rotateY(90deg) translateZ(60px); 
-		-ms-transform: rotateY(90deg) translateZ(60px); 
-		transform: rotateY(90deg) translateZ(60px); 
-    	background-image: url("./assets/dice-2.png");
-		background-position: center;
-		background-size: cover;
-	}
-	.spinner .face3 { 
-		-webkit-transform: rotateY(90deg) rotateX(90deg) translateZ(60px); 
-		-ms-transform: rotateY(90deg) rotateX(90deg) translateZ(60px); 
-		transform: rotateY(90deg) rotateX(90deg) translateZ(60px); 
-		background-image: url("./assets/dice-3.png");
-		background-position: center;
-		background-size: cover;
-	}
-	.spinner .face4 { 
-		-webkit-transform: rotateY(180deg) rotateZ(90deg) translateZ(60px); 
-		-ms-transform: rotateY(180deg) rotateZ(90deg) translateZ(60px); 
-		transform: rotateY(180deg) rotateZ(90deg) translateZ(60px); 
-		background-image: url("./assets/dice-4.png");
-		background-position: center;
-		background-size: cover;
-	}
-	.spinner .face5 { 
-		-webkit-transform: rotateY(-90deg) rotateZ(90deg) translateZ(60px); 
-		-ms-transform: rotateY(-90deg) rotateZ(90deg) translateZ(60px); 
-		transform: rotateY(-90deg) rotateZ(90deg) translateZ(60px); 
-		background-image: url("./assets/dice-5.png");
-		background-position: center;
-		background-size: cover;
-	}
-	.spinner .face6 { 
-		-webkit-transform: rotateX(-90deg) translateZ(60px); 
-		-ms-transform: rotateX(-90deg) translateZ(60px); 
-		transform: rotateX(-90deg) translateZ(60px); 
-		background-image: url("./assets/dice-6.png");
-		background-position: center;
-		background-size: cover;
-	}
-
-	.spinner {
-		-webkit-transform-style: preserve-3d;
-		-ms-transform-style: preserve-3d;
-		transform-style: preserve-3d;
-		-webkit-transform-origin: 60px 60px 0;
-		-ms-transform-origin: 60px 60px 0;
-		transform-origin: 60px 60px 0;
-		-webkit-transition: all .9s ease;
-		-o-transition: all .9s ease;
-		transition: all .9s ease;
-		-webkit-transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
-		-ms-transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
-		-o-transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
-		transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
-	}
-	.spinner.dice-1 {
-		-webkit-transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
-		-ms-transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
-		-o-transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
-		transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
-	}
-	.spinner.dice-2 {
-		-webkit-transform: rotateX(0deg) rotateY(-90deg) rotateZ(0deg);
-		-ms-transform: rotateX(0deg) rotateY(-90deg) rotateZ(0deg);
-		-o-transform: rotateX(0deg) rotateY(-90deg) rotateZ(0deg);
-		transform: rotateX(0deg) rotateY(-90deg) rotateZ(0deg); 
-	}
-	.spinner.dice-3 {
-		-webkit-transform: rotateX(0deg) rotateY(-90deg) rotateZ(90deg);
-		-ms-transform: rotateX(0deg) rotateY(-90deg) rotateZ(90deg);
-		-o-transform: rotateX(0deg) rotateY(-90deg) rotateZ(90deg);
-		transform: rotateX(0deg) rotateY(-90deg) rotateZ(90deg); 
-	}
-	.spinner.dice-4 {
-		-webkit-transform: rotateX(0deg) rotateY(180deg) rotateZ(90deg);
-		-ms-transform: rotateX(0deg) rotateY(180deg) rotateZ(90deg);
-		-o-transform: rotateX(0deg) rotateY(180deg) rotateZ(90deg);
-		transform: rotateX(0deg) rotateY(180deg) rotateZ(90deg); 
-	}
-	.spinner.dice-5 {
-		-webkit-transform: rotateX(0deg) rotateY(90deg) rotateZ(0deg);
-		-ms-transform: rotateX(0deg) rotateY(90deg) rotateZ(0deg);
-		-o-transform: rotateX(0deg) rotateY(90deg) rotateZ(0deg);
-		transform: rotateX(0deg) rotateY(90deg) rotateZ(0deg); 
-	}
-	.spinner.dice-6 {
-		-webkit-transform: rotateX(90deg) rotateY(90deg) rotateZ(0deg);
-		-ms-transform: rotateX(90deg) rotateY(90deg) rotateZ(0deg);
-		-o-transform: rotateX(90deg) rotateY(90deg) rotateZ(0deg);
-		transform: rotateX(90deg) rotateY(90deg) rotateZ(0deg); 
 	}
 </style>
